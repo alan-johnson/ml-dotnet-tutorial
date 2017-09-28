@@ -1,10 +1,23 @@
-﻿using System;
+﻿// add in MarkLogic C# api
+using MarkLogic.REST;
+using System;
 using System.Configuration;
+using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 
-// add in MarkLogic C# api
-using MarkLogic.REST;
+/*
+ * Example application that uses MarkLogic's REST api to read, write and search
+ * documents in MarkLogic's example database of "Documents". Other databases could
+ * be used simply by using a port number of a MarkLogic REST instance along with
+ * a user with sufficient permissions to read and update the desired database.
+ * 
+ * Please see the README.md test file for more information about the classes used
+ * in this example and their usage of the MarkLogic REST api.
+ * 
+ * For more information on MarkLogic's REST api, please see the documentation at:
+ *      http://docs.marklogic.com/REST
+ */
 
 namespace mldotnettutorialconsole
 {
@@ -87,35 +100,77 @@ namespace mldotnettutorialconsole
 			dbClient.Release();
 		}
 
-		static void ReadFromDatabase(DatabaseClient dbClient)
+        /*
+         * Accept a Document ID (URI) from the console. Read the desired
+         * document from the Documents database in MarkLogic. Display the
+         * returned document plus write the document to the current working
+         * directory.
+         */
+        static void ReadFromDatabase(DatabaseClient dbClient)
         {
+            // Get the desired document's URI from the console.
             Console.Write("Document URI: ");
 			var uri = Console.ReadLine();
 
-			// Create a DocumentManager to act as our interface for
-			//  reading and writing to/from the database.
-			DocumentManager mgr = dbClient.NewDocumentManager();
+            // The document content will be saved to the filename specified.
+            //  If not filename is specified, the filename part of the URI 
+            //  is used as the filename.
+
+            string myDocumentPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string defaultFname = string.Empty;
+            if (uri.StartsWith("/") || uri.StartsWith("\\"))
+            {
+                defaultFname = myDocumentPath + uri;
+            } else {
+                defaultFname = myDocumentPath + "/" + uri;
+            }
+            defaultFname = defaultFname.Replace("\\", "/");
+            Console.Write("Save as (ENTER for "+ defaultFname + "): ");
+            string filename = Console.ReadLine();
+            if (filename.Length == 0)
+            {
+                filename = defaultFname;
+            }
+
+            // Create a DocumentManager to act as our interface for
+            //  reading and writing to/from the database.
+            DocumentManager mgr = dbClient.NewDocumentManager();
 
             // Use the DocumentManager object to read a document 
             // with the uri of "/doc1.xml" from the "Documents" database.
             string mimetype = string.Empty;
             string content = string.Empty;
 
+            // Use the GenericDocument class to read a non-binary document
+            //  from the "Documents" database. This example code reads text,
+            //  JSON and XML data but binary is not implemented.
             GenericDocument doc = mgr.Read(uri);
             mimetype = doc.GetMimetype();
             content = doc.GetContent();
 
+            // Display the retuned document's mime type and content.
 			Console.WriteLine(" ");
-			Console.WriteLine("---Results----------");
+			Console.WriteLine("---Document Saved-------------");
+            Console.WriteLine("---Document Content from DB---");
             Console.Write("Mime type: ");
             Console.WriteLine(mimetype);
             Console.Write("Content: ");
             Console.WriteLine(content);
 
-		}
+            // Write the returned content to the specified file. 
+            File.WriteAllText(filename, content);
 
-		static void WriteToDatabase(DatabaseClient dbClient)
+        }
+
+        /*
+         * Accept a Document path and filename from the console. 
+         * Also, accept the desired document's URI from the console. 
+         * Write the document to the "Documents" database in MarkLogic.
+         */
+        static void WriteToDatabase(DatabaseClient dbClient)
 		{
+            // Get the desired document to write to the MarkLogic
+            //  "Documents" database.
             Console.Write("Document path and filename to store: ");
 			string filename = Console.ReadLine();
 			if (filename.Length == 0)
@@ -125,6 +180,11 @@ namespace mldotnettutorialconsole
 			}
 			string content = System.IO.File.ReadAllText(filename);
 
+            // Get a Document URI. If the URI does not already
+            //  exist in the "Documents" database, the document
+            //  is inserted as a new document. If the URI does exist,
+            //  the existing document in the "Documents" database is 
+            //  updated.
             Console.Write("Document URI: ");
 			var uri = Console.ReadLine();
             if (uri.Length == 0)
@@ -137,12 +197,18 @@ namespace mldotnettutorialconsole
 			//  reading and writing to/from the database.
 			DocumentManager mgr = dbClient.NewDocumentManager();
 
-            // Use the DocumentManager object to read a document 
-            // with the uri of "/doc1.xml" from the "Documents" database.
+            // Create a GenericDocument object to write the
+            //  content from the desired file to the MarkLogic
+            //  database. The connection from the Database Client
+            //  is used to write to the database.
             GenericDocument doc = new GenericDocument();
+            // if known, set the mime type.
             doc.SetMimetype(string.Empty);
+            // set the contents from the file that was read.
 			doc.SetContent(content);
 
+            // write the document to the database with the
+            //  specified URI.
 			var results = mgr.Write(uri, doc);
 
 			Console.WriteLine(" ");
@@ -151,7 +217,12 @@ namespace mldotnettutorialconsole
 			Console.WriteLine(results);
 		}
 
-		static void SearchDatabase(DatabaseClient dbClient)
+        /*
+         * Accept a text search string from the console. 
+         * Search the "Documents" database in MarkLogic and
+         * return a Search Result object.
+         */
+        static void SearchDatabase(DatabaseClient dbClient)
 		{
 			Console.Write("Enter a search term: ");
 			var query = Console.ReadLine();
