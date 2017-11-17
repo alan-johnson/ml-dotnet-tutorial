@@ -1,10 +1,18 @@
 ﻿// add in MarkLogic C# api
 using MarkLogic.REST;
+using MimeTypes;
 using System;
 using System.Configuration;
 using System.IO;
-using System.Threading.Tasks;
-using System.Xml;
+
+
+// Only used for asynchronous tasks.
+// not used in this example.
+//using System.Threading.Tasks;
+
+// Used for XML support.
+//  not used in this example.
+//using System.Xml;
 
 /*
  * Example application that uses MarkLogic's REST api to read, write and search
@@ -73,28 +81,6 @@ namespace mldotnettutorialconsole
 
             } while (cmd != "exit");
 
-            /*
-            // Test reading an XML document synchronously
-            XmlDocument doc = ReadXMLTest(dbClient);
-            Console.WriteLine("Document read.");
-            Console.WriteLine(doc.InnerXml);
-
-            // Test writing the XML document to 
-            //  a new URI (MarkLogic Insert operation)
-            WriteXMLTest(dbClient, "/doc1b.xml", doc);
-            Console.WriteLine("document /doc1b.xml written to database.");
-
-            var results = SearchTest(dbClient, "dogs");
-			Console.WriteLine("Search results follows.");
-            Console.WriteLine(results);
-            */
-
-			// Uncomment to read document asynchronously
-			/*
-            var task = TestAsync();
-			task.Wait();
-            */
-
 			// Tell the DatabaseClient we are done with it
 			//  and release any connections and resources
 			dbClient.Release();
@@ -157,8 +143,11 @@ namespace mldotnettutorialconsole
             Console.Write("Content: ");
             Console.WriteLine(content);
 
-            // Write the returned content to the specified file. 
-            File.WriteAllText(filename, content);
+			// Write the returned content to the specified file. 
+			//File.WriteAllText(filename, content);
+			FileInfo file = new FileInfo(filename);
+			file.Directory.Create(); // If the directory already exists, this method does nothing.
+			File.WriteAllText(file.FullName, content);
 
         }
 
@@ -178,7 +167,7 @@ namespace mldotnettutorialconsole
 				Console.WriteLine(("No file specified."));
 				return;
 			}
-			string content = System.IO.File.ReadAllText(filename);
+			string content = File.ReadAllText(filename);
 
             // Get a Document URI. If the URI does not already
             //  exist in the "Documents" database, the document
@@ -202,8 +191,12 @@ namespace mldotnettutorialconsole
             //  database. The connection from the Database Client
             //  is used to write to the database.
             GenericDocument doc = new GenericDocument();
-            // if known, set the mime type.
-            doc.SetMimetype(string.Empty);
+            // set the mime type.
+            string mimetype = MimeTypeMap.GetMimeType(Path.GetExtension(filename));
+            Console.WriteLine(Path.GetExtension(filename));
+            Console.WriteLine(mimetype);
+
+            doc.SetMimetype(mimetype);
             // set the contents from the file that was read.
 			doc.SetContent(content);
 
@@ -275,69 +268,6 @@ namespace mldotnettutorialconsole
 			// string results = searchResult.ToString();
         
         }
-
-        static XmlDocument ReadXMLTest(DatabaseClient dbClient)
-		{
-		    // Create a DocumentManager to act as our interface for
-            //  reading and writing to/from the database.
-            XmlDocumentManager mgr = dbClient.NewXmlDocumentManager();
-
-			// Use the DocumentManager object to read a document 
-            // with the uri of "/doc1.xml" from the "Documents" database.
-
-            XmlDocument content = mgr.Read("/doc1.xml");
-
-            return content;
-		}
-
-		static void WriteXMLTest(DatabaseClient dbClient, string uri, XmlDocument content)
-		{
-			// Create a DocumentManager to act as our interface for
-			//  reading and writing to/from the database.
-			XmlDocumentManager mgr = dbClient.NewXmlDocumentManager();
-
-			// Use the DocumentManager object to Write the 
-			// document back to the database with a new uri.
-			mgr.Write(uri, content);
-
-            return;
-		}
-
-		static string SearchTest(DatabaseClient dbClient, string query)
-		{
-			// Create a QueryManager to act as our interface for
-			//  searching the database.
-			QueryManager mgr = dbClient.NewQueryManager();
-
-            // Use the DocumentManager object to Write the 
-            // document back to the database with a new uri.
-            string results = System.String.Empty;
-
-			//results = mgr.SearchRaw(query, 1, 10, "xml");
-            SearchResult result = mgr.Search(query);
-            results = result.ToString();
-
-			return results;
-		}
-
-		static async Task TestAsync()
-		{
-            var host = ConfigurationManager.AppSettings["host"];
-            var port = ConfigurationManager.AppSettings["port"];
-			var username = ConfigurationManager.AppSettings["username"];
-			var password = ConfigurationManager.AppSettings["password"];
-			var realm = ConfigurationManager.AppSettings["realm"];
-
-            DatabaseClient dbClient = DatabaseClientFactory.NewClient(host, port, username, password, realm, AuthType.Digest);
-			
-            DocumentManager mgr = dbClient.NewDocumentManager();
-
-			var r = await mgr.ReadAsync("/doc1.xml");
-
-			Console.WriteLine(r);
-			
-            dbClient.Release();
-		}
 		
         static void PrintMenu()
         {

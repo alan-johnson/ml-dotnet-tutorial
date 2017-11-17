@@ -98,47 +98,4 @@ namespace MarkLogic.REST
          */
         void Release();
 	}
-
-    /*
-    public class DatabaseClientBase : DatabaseClient
-	{
-        // SetConnection() - set the connection information, creating an initialized HttpClient
-        // for this object. The DatabaseClient.Release() method should be called when this object
-        // is no longer needed to release any resources consumed by the HttpClient object.
-        //
-        public void SetConnection(string _host, string _port, string _username,
-                                  string _password, string _domain, AuthType _authType)
-        { return; }
-
-        // 
-        // NewDocumentManger() - create a new DocumentManager class to 
-        // read or write documents from/to MarkLogic.
-        //
-        public DocumentManager NewDocumentManager() { return null; }
-
-        // 
-        // NewXmlDocumentManger() - create a new DocumentManager class to 
-        // read or write XML documents from/to MarkLogic.
-        //
-        public XmlDocumentManager NewXmlDocumentManager() { return null; }
-
-        // 
-        // NewJsonDocumentManger() - create a new DocumentManager class to 
-        // read or write JSON documents from/to MarkLogic.
-        //
-        public JsonDocumentManager NewJsonDocumentManager() { return null; }
-
-        // 
-        // NewQueryManger() - create a new QueryManager class to 
-        // search contents in a MarkLogic database.
-        //
-        public QueryManager NewQueryManager() { return null; }
-
-        //
-        // Disppose of the HttpClient object used by this DatabaseClient object and release resources
-        // the HttpClient object consumes.
-        //
-        public void Release() { return; }
-	}
-    */
 }

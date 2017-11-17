@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-/*------------------- unused?
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
-using System.IO;
-//--------------------*/
-
 
 using MarkLogic.impl;
 

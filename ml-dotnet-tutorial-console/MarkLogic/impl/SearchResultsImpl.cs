@@ -52,13 +52,6 @@ namespace MarkLogic.impl
 			this.m_totalResults = _total;
 		}
 
-        /*
-		public string GetMatchResults()
-		{
-			return this.ToString();
-		}
-        */
-
         public List<MatchDocSummary> GetMatchResults()
 		{
 			return this.m_docSummaries;

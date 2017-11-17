@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Xml;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Linq;
 using MarkLogic.REST;
 
 namespace MarkLogic.impl
@@ -40,15 +36,7 @@ namespace MarkLogic.impl
 			HttpResponseMessage response = GetRESTClient().GetAsync(requestUri).Result;  // Blocking call!  
 			if (response.IsSuccessStatusCode)
 			{
-				/*
-                var start = response.Headers.GetValues("vnd.marklogic.start").FirstOrDefault();
-                var page = response.Headers.GetValues("vnd.marklogic.pageLength").FirstOrDefault();
-                var total = response.Headers.GetValues("vnd.marklogic.result-estimate").FirstOrDefault();
-                */
-
 				var hdrs = response.Headers;
-				//var start = "0";
-				//var page = "0";
 				var total = "0";
 
 				var result = response.Content.ReadAsStringAsync().Result;   // Blocking call!

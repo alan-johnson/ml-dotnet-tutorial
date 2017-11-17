@@ -74,6 +74,7 @@
     <Compile Include="MarkLogic\impl\XmlDocumentManagerImpl.cs" />
     <Compile Include="MarkLogic\impl\DatabaseClientImpl.cs" />
     <Compile Include="MarkLogic\impl\SearchResultsImpl.cs" />
+    <Compile Include="MimeTypeMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

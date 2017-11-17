@@ -21,13 +21,13 @@ The following instructions assume MarkLogic is installed on your local computer,
 
 ### Clone the Microsoft Visual Studio project
 
-1. Clone the **dot-net-tutorial** Microsoft Visual Studio project from GitHub. After cloning, the `dot-net-tutorial.xml` workspace file will also be downloaded in the same directory. 
+1. Clone the **ml-dotnet-tutorial** Microsoft Visual Studio project from GitHub. After cloning, the `ml-dotnet-tutorial.xml` workspace file will also be downloaded in the same directory. 
 2. Open a browser to <http://localhost:8000>, Query Console.
 3. On the right-hand side of Query Console, click the `Workspace` dropdown arrow.
 4. From the menu, select `Import Workspace...`.
 5. Click the **Choose File** button.
-6. Browse to directory with the `dot-net-tutorial.xml` file.
-7. Select the `dot-net-tutorial.xml` file then click the **Open** button.
+6. Browse to directory with the `ml-dotnet-tutorial.xml` file.
+7. Select the `ml-dotnet-tutorial.xml` file then click the **Open** button.
 8. Click the **Import** button to import the new Workspace into Query Console.  
 
 ### Setting MarkLogic Configurations Settings

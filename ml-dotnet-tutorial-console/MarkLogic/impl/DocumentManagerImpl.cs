@@ -113,36 +113,8 @@ namespace MarkLogic.impl
 
         public string SetURL(string uri)
         {
-            string url = string.Format("http://{0}:{1}{2}/?uri={3}", m_host, m_port, m_cliientRestDocService, uri);
+            string url = string.Format("http://{0}:{1}{2}/?uri={3}&collection=dotnet", m_host, m_port, m_cliientRestDocService, uri);
             return url;
         }
     }
-
-    /*
-    public class GenericDocumentImpl : GenericDocument
-    {
-        string m_content = string.Empty;
-        string m_mimetype = string.Empty;
-
-        public string GetContent()
-        {
-            return m_content;
-        }
-
-        public void SetContent(string _content)
-        {
-            m_content = _content;
-        }
-
-        public string GetMimetype()
-        {
-            return m_mimetype;
-        }
-
-        public void SetMimetype(string _mimetype)
-        {
-            m_mimetype = _mimetype;
-        }
-    }
-    */
 }
